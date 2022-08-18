@@ -2,20 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "vmCount": {
-            "type": "int",
-            "minValue": 1,
-            "maxValue": 200,
-            "metadata": {
-                "description": "The number of VMs to create."
-            }
-        },
-        "startIndex": {
-            "type": "int",
-            "metadata": {
-                "description": "The starting index for VM names"
-            }
-        },
         "location": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]",
@@ -57,13 +43,6 @@
             "type": "string",
             "defaultValue": "Standard_D4s_v4"
         },
-        "enableAcceleratedNetworking": {
-            "type": "bool",
-            "defaultValue": true,
-            "metadata": {
-                "description": "Enable Accelerated Networking (not available in some lesser VMs)."
-            }
-        },
         "adminUsername": {
             "type": "string",
             "defaultValue": "",
@@ -81,14 +60,11 @@
         "resourceTags": {
             "type": "object",
             "defaultValue": {
-                "Environment": "Dev",
-                "Project": "DPDK",
-                "DeleteGroup": "GroupVM"
+                "product": "cloudSwXtch"
             }
         }
     },
     "variables": {
-        "vmName": "vm",
         "networkInterfaceName0": "nic0",
         "networkInterfaceName1": "nic1",
         "osDiskName": "osdisk",
@@ -96,32 +72,9 @@
         "imageOffer": "0001-com-ubuntu-server-focal",
         "imageSKU": "20_04-lts"
     },
-    "functions": [
-        {
-            "namespace": "sdmc",
-            "members": {
-                "basename": {
-                    "parameters": [
-                        {
-                            "name": "base",
-                            "type": "string"
-                        },
-                        {
-                            "name": "index",
-                            "type": "int"
-                        }
-                    ],
-                    "output": {
-                        "type": "string",
-                        "value": "[format('{0}{1:D3}',parameters('base'),parameters('index'))]"
-                    }
-                }
-            }
-        }
-    ],
     "resources": [
         {
-            "name": "[concat(sdmc.basename(parameters('vmBaseName'), copyIndex(parameters('startIndex'))), '_', variables('networkInterfaceName0'))]",
+            "name": "[concat(parameters('vmBaseName'), '_', variables('networkInterfaceName0'))]",
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2020-06-01",
             "location": "[parameters('location')]",
@@ -139,15 +92,11 @@
                         }
                     }
                 ],
-                "enableAcceleratedNetworking": "[parameters('enableAcceleratedNetworking')]"
-            },
-            "copy": {
-                "name": "nic0copy",
-                "count": "[parameters('vmCount')]"
+                "enableAcceleratedNetworking": "false"
             }
         },
         {
-            "name": "[concat(sdmc.basename(parameters('vmBaseName'), copyIndex(parameters('startIndex'))), '_', variables('networkInterfaceName1'))]",
+            "name": "[concat(parameters('vmBaseName'), '_', variables('networkInterfaceName1'))]",
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2020-06-01",
             "location": "[parameters('location')]",
@@ -165,22 +114,18 @@
                         }
                     }
                 ],
-                "enableAcceleratedNetworking": "[parameters('enableAcceleratedNetworking')]"
-            },
-            "copy": {
-                "name": "nic1copy",
-                "count": "[parameters('vmCount')]"
+                "enableAcceleratedNetworking": "true"
             }
         },
         {
-            "name": "[concat(sdmc.basename(parameters('vmBaseName'), copyIndex(parameters('startIndex'))), '_', variables('vmName'))]",
+            "name": "[parameters('vmBaseName')]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2020-12-01",
             "location": "[parameters('location')]",
             "tags": "[parameters('resourceTags')]",
             "dependsOn": [
-                "[concat(sdmc.basename(parameters('vmBaseName'), copyIndex(parameters('startIndex'))), '_', variables('networkInterfaceName0'))]",
-                "[concat(sdmc.basename(parameters('vmBaseName'), copyIndex(parameters('startIndex'))), '_', variables('networkInterfaceName1'))]"
+                "[concat(parameters('vmBaseName'), '_', variables('networkInterfaceName0'))]",
+                "[concat(parameters('vmBaseName'), '_', variables('networkInterfaceName1'))]"
             ],
             "properties": {
                 "hardwareProfile": {
@@ -188,7 +133,7 @@
                 },
                 "storageProfile": {
                     "osDisk": {
-                        "name": "[concat(sdmc.basename(parameters('vmBaseName'), copyIndex(parameters('startIndex'))), '_', variables('osDiskName'))]",
+                        "name": "[concat(parameters('vmBaseName'), '_', variables('osDiskName'))]",
                         "createOption": "fromImage",
                         "managedDisk": {
                             "storageAccountType": "StandardSSD_LRS"
@@ -205,13 +150,13 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(sdmc.basename(parameters('vmBaseName'), copyIndex(parameters('startIndex'))), '_' ,variables('networkInterfaceName0')))]",
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmBaseName'), '_' ,variables('networkInterfaceName0')))]",
                             "properties": {
                                 "primary": true
                             }
                         },
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(sdmc.basename(parameters('vmBaseName'), copyIndex(parameters('startIndex'))), '_', variables('networkInterfaceName1')))]",
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmBaseName'), '_', variables('networkInterfaceName1')))]",
                             "properties": {
                                 "primary": false
                             }
@@ -219,7 +164,7 @@
                     ]
                 },
                 "osProfile": {
-                    "computerName": "[sdmc.basename(parameters('vmBaseName'), copyIndex(parameters('startIndex')))]",
+                    "computerName": "[parameters('vmBaseName')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "linuxConfiguration": {
                         "disablePasswordAuthentication": true,
@@ -238,10 +183,6 @@
                         "enabled": false
                     }
                 }
-            },
-            "copy": {
-                "name": "vmcopy",
-                "count": "[parameters('vmCount')]"
             }
         }
     ],
