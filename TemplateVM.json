@@ -9,6 +9,12 @@
                 "description": "Specifies the location for all resources."
             }
         },
+        "imageSKU": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of sku for the current plan"
+            }
+        },
         "virtualNetworkName": {
             "type": "string",
             "metadata": {
@@ -125,7 +131,6 @@
         "subnetDataId": "[resourceId(parameters('virtualNetworkRGName'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'), parameters('subnetDataName'))]",
         "imagePublisher": "swxtchiollc1614108926893",
         "imageOffer": "cloudswxtch-vm-001-preview",
-        "imageSKU": "swxtch-iex-001",
         "adminPublicKey": "[ if(contains(parameters('credentials').authenticationType, 'sshPublicKey'), parameters('credentials').sshPublicKey, '' )]"
     },
     "resources": [
@@ -186,7 +191,7 @@
             "plan": {
                 "publisher": "[variables('imagePublisher')]",
                 "product": "[variables('imageOffer')]",
-                "name": "[variables('imageSKU')]"
+                "name": "[parameters('imageSKU')]"
             },
             "properties": {
                 "hardwareProfile": {
@@ -205,7 +210,7 @@
                     "imageReference": {
                         "publisher": "[variables('imagePublisher')]",
                         "offer": "[variables('imageOffer')]",
-                        "sku": "[variables('imageSKU')]",
+                        "sku": "[parameters('imageSKU')]",
                         "version": "[parameters('version')]"
                     }
                 },

@@ -10,12 +10,12 @@
                     "label": "Basics",
                     "elements": [
                         {
-                            "name": "plan",
+                            "name": "planSection",
                             "type": "Microsoft.Common.Section",
                             "label": "cloudSwXtch commercial plan",
                             "elements": [
                                 {
-                                    "name": "PlanInfo",
+                                    "name": "PlanInfoText",
                                     "type": "Microsoft.Common.TextBlock",
                                     "visible": true,
                                     "options": {
@@ -422,7 +422,8 @@
                 "ppgId": "[if(steps('network').AdvancedSection.ppgEnable, steps('network').AdvancedSection.ppgTextBox, '')]",
                 "tagsByResource": "[steps('basics').TagsSection.Tags]",
                 "adminName": "[steps('basics').adminName]",
-                "credentials": "[steps('basics').credentials]"
+                "credentials": "[steps('basics').credentials]",
+                "imageSKU": "[if(equals(steps('basics').planSection.plan, 'small'), 'swxtch-small-001', if(equals(steps('basics').planSection.plan, 'medium'), 'swxtch-medium-001', if(equals(steps('basics').planSection.plan, 'large'), 'swxtch-large-001', if(equals(steps('basics').planSection.plan, 'iex'), 'swxtch-iex-001', 'invalid'))))]"
             },
             "kind": "ResourceGroup",
             "location": "[steps('basics').resourceScope.location.name]",
