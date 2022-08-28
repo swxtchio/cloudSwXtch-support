@@ -422,7 +422,7 @@
                 "ppgId": "[if(steps('network').AdvancedSection.ppgEnable, steps('network').AdvancedSection.ppgTextBox, '')]",
                 "tagsByResource": "[steps('basics').TagsSection.Tags]",
                 "adminName": "[steps('basics').adminName]",
-                "credentials": "[steps('basics').credentials]",
+                "sshPublicKey": "[ if(contains(steps('basics').credentials.authenticationType, 'sshPublicKey'), steps('basics').credentials.sshPublicKey, '' )]",
                 "imageSKU": "[if(equals(steps('basics').planSection.plan, 'small'), 'swxtch-small-001', if(equals(steps('basics').planSection.plan, 'medium'), 'swxtch-medium-001', if(equals(steps('basics').planSection.plan, 'large'), 'swxtch-large-001', if(equals(steps('basics').planSection.plan, 'iex'), 'swxtch-iex-001', 'invalid'))))]"
             },
             "kind": "ResourceGroup",

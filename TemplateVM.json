@@ -113,11 +113,11 @@
                 "description": "Admin user name of the VM used for the cloudSwXtch"
             }
         },
-        "credentials": {
-            "type": "object",
-            "defaultValue": {},
+        "sshPublicKey": {
+            "type": "string",
+            "defaultValue": "",
             "metadata": {
-                "description": "Credentials structure"
+                "description": "SSH public key"
             }
         }
     },
@@ -130,8 +130,7 @@
         "subnetCtrlId": "[resourceId(parameters('virtualNetworkRGName'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'), parameters('subnetCtrlName'))]",
         "subnetDataId": "[resourceId(parameters('virtualNetworkRGName'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'), parameters('subnetDataName'))]",
         "imagePublisher": "swxtchiollc1614108926893",
-        "imageOffer": "cloudswxtch-vm-001-preview",
-        "adminPublicKey": "[ if(contains(parameters('credentials').authenticationType, 'sshPublicKey'), parameters('credentials').sshPublicKey, '' )]"
+        "imageOffer": "cloudswxtch-vm-001-preview"
     },
     "resources": [
         {
@@ -241,7 +240,7 @@
                             "publicKeys": [
                                 {
                                     "path": "[concat('/home/', parameters('adminName'), '/.ssh/authorized_keys')]",
-                                    "keyData": "[variables('adminPublicKey')]"
+                                    "keyData": "[parameters('sshPublicKey')]"
                                 }
                             ]
                         }
@@ -266,7 +265,7 @@
         },
         "AdminPublicKey": {
             "type": "string",
-            "value": "[variables('adminPublicKey')]"
+            "value": "[parameters('sshPublicKey')]"
         },
         "CtrlIp": {
             "type": "string",
