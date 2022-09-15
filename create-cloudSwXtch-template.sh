@@ -8,13 +8,13 @@ if [[ ($# -lt 1) || ($# -gt 2) ]]; then
     echo "Invalid number of arguments supplied."
     echo "usage: script <resource-group> [name:cloudSwXtch-template]"
     echo "    <resource-group> must exist and is where the template spec will be installed"
-    echo "    [name] is the name of the template spec and is optional. Defaults to 'cloudSwXtch-from-vm-image'."
+    echo "    [name] is the name of the template spec and is optional. Defaults to 'cloudSwXtch-from-marketplace'."
     echo "This script expects the template source files to be in the same directory."
     exit -1
 fi
 
 rg=$1
-TemplateNameInAzure=${2:-cloudSwXtch-template}
+TemplateNameInAzure=${2:-cloudSwXtch-from-marketplace}
 vmTemplate="./TemplateVM.json"
 uiTemplate="./TemplateUI.json"
 templateVersion="1"
