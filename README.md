@@ -16,7 +16,7 @@ These scripts make it wasy to create the VM that is needed to run cloudSwXtch.
 | vnetRG | Resrouce group of the virtual network |
 | vnetName | Name of the virtual network |
 | subnetCtrl | Subnet of the default network interface |
-| subnetData | Subnet used for switch data. Can be same as subnetCtrl |
+| subnetData | Subnet used for switch data |
 | vm_type | Full VM type name. `Standard_Dxx_vx` |
 | user | Admin user account to be created on the VM |
 | key | SSH public key for the user account. Wrap in quotes |
@@ -24,5 +24,5 @@ These scripts make it wasy to create the VM that is needed to run cloudSwXtch.
 
 Example:
 ```
-./create-cloudSwXtch-vm.sh switch001 test-rg VNetRG vnet-name subnet-ctrl subnet-ctrl Standard_D4s_v4 admin "public key"
+./create-cloudSwXtch-vm.sh switch001 test-rg VNetRG vnet-name subnet-ctrl subnet-data Standard_D4s_v4 admin "public key"
 ```
