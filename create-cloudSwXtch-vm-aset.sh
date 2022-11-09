@@ -6,7 +6,7 @@
 
 if [ $# -ne 10 ]; then
     echo "Invalid number of arguments supplied."
-    echo "usage: script <name> <rg> <vnetRG> <vnetName> <subnetCtrl> <subnetData> <vm_type> <admin> <availabilitySet> <key>"
+    echo "usage: script <name> <rg> <vnetRG> <vnetName> <subnetCtrl> <subnetData> <vm_type> <admin> <key> <availabilitySet>"
     exit -1
 fi
 
@@ -18,8 +18,8 @@ subnetCtrl=$5
 subnetData=$6
 vm_type=$7
 admin=$8
-availabilitySet=$9
-key=${10}
+key=${9}
+availabilitySet=${10}
 
 echo
 echo "Creating Stock Ubuntu 20.04 instances of type ${vm_type}"
