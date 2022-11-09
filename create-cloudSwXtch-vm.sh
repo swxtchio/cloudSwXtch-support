@@ -31,7 +31,7 @@ echo
 read -p "Press Y to continue:" -n 1 -r
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    az deployment group create --resource-group ${RG} --template-file arm-ubuntu-20_04-lts.json --parameters vmBaseName=${Name} vnetRG=${vnetRG} vnetName=${vnetName} subnetCtrl=${subnetCtrl} subnetData=${subnetData} virtualMachineSize=${vm_type} adminUsername=${admin} adminPublicKey="${key}"
+    az deployment group create --resource-group ${RG} --template-file azure-ubuntu-20_04-lts.json --parameters vmBaseName=${Name} vnetRG=${vnetRG} vnetName=${vnetName} subnetCtrl=${subnetCtrl} subnetData=${subnetData} virtualMachineSize=${vm_type} adminUsername=${admin} adminPublicKey="${key}"
 else
     echo "Aborting"
 fi
