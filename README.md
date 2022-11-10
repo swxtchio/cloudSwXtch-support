@@ -1,6 +1,6 @@
 # cloudSwXtch-support
 Support files for cloudSwXtch
-These scripts make it wasy to create the VM that is needed to run cloudSwXtch.
+These scripts make it easy to create the VM that is needed to run cloudSwXtch.
 
 `create-cloudSwXtch-vm.sh` - basic cloudSwXtch VM
 `create-cloudSwXtch-vm-aset.sh` - supports 
