@@ -110,8 +110,8 @@
                             "toolTip": "Full resource ID value. Should start with '/subscriptions/<guid>/'...",
                             "constraints": {
                                 "required": true,
-                                "regex": "^[a-z0-9A-Z./]{20,299}$",
-                                "validationMessage": "Only alphanumeric characters are allowed, and the value must be 4-30 characters long."
+                                "regex": "^[a-z0-9A-Z_./-]{20,299}$",
+                                "validationMessage": "Only alphanumeric characters are allowed, and the value must be 20-299 characters long."
                             },
                             "visible": "true"
                         },

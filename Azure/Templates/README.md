@@ -30,7 +30,7 @@ Once the VHD file is in the image gallery, there are several ways to create a VM
 ```
 rg="<your-rg-here>"
 git clone https://github.com/swxtchio/swx-cloudSwXtch-support
-cd swx-cloudSwXtch-support
+cd swx-cloudSwXtch-support/Azure/Templates
 az ts create -n cloudSwxtch-from-vm-image -g $rg -v 1 -f AzureImageGalleryTemplateVM.json --ui-form-definition AzureImageGalleryTemplateUI.json
 ```
 
