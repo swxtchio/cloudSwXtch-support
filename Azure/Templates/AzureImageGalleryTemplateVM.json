@@ -1,0 +1,298 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Specifies the location for all resources."
+            }
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Virtual Network (VNET)"
+            }
+        },
+        "virtualNetworkRGName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of resource group of VNET (new or existing)"
+            }
+        },
+        "vnetNewOrExisting": {
+            "type": "string",
+            "allowedValues": [
+                "existing"
+            ],
+            "defaultValue": "existing",
+            "metadata": {
+                "description": "Use new or existing VNET"
+            }
+        },
+        "subnetCtrlName": {
+            "type": "string",
+            "metadata": {
+                "description": "Subnet for Management"
+            }
+        },
+        "subnetDataName": {
+            "type": "string",
+            "metadata": {
+                "description": "Subnet for Data"
+            }
+        },
+        "useStaticIPs": {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "false",
+                "true"
+            ],
+            "metadata": {
+                "description": "Determines if IP addresses are assigned dynamically (false) or statically (true)."
+            }
+        },
+        "staticCtrlIP": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Only used if useStaticIPs is true."
+            }
+        },
+        "staticDataIP": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Only used if useStaticIPs is true."
+            }
+        },
+        "swxtchName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the cloudSwXtch instance. Used to generate resource names."
+            }
+        },
+        "version": {
+            "type": "string",
+            "defaultValue": "latest",
+            "metadata": {
+                "description": "Specifies the customer-requested version of the software."
+            }
+        },
+        "swxtchSize": {
+            "type": "string",
+            "metadata": {
+                "description": "Size of the switch VM instance"
+            }
+        },
+        "ppgId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Resource ID of the 'Proximity Placement Group' or empty if none"
+            }
+        },
+        "avsId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Resource ID of the 'Availability Set' or empty if none"
+            }
+        },
+        "avzone": {
+            "type": "string",
+            "defaultValue": "1",
+            "allowedValues": [
+                "1",
+                "2",
+                "3"
+            ],
+            "metadata": {
+                "description": "Zone number for the virtual machine"
+            }
+        },
+        "tagsByResource": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Array of tags grouped by resource type"
+            }
+        },
+        "adminName": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin user name of the VM used for the cloudSwXtch"
+            }
+        },
+        "credentials": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Credentials structure"
+            }
+        },
+        "imageDefinitionID" : {
+            "type": "string",
+            "metadata": {
+                "description": "Resource ID for the 'VM Image Definition' holding cloudSwXtch images"
+            }
+        }
+    },
+    "variables": {
+        "svcBaseName": "[concat(parameters('swxtchName'), '_vm')]",
+        "svcNic0Name": "[concat(parameters('swxtchName'), '_nic0')]",
+        "svcNic1Name": "[concat(parameters('swxtchName'), '_nic1')]",
+        "svcDiskName": "[concat(parameters('swxtchName'), '_osdisk')]",
+        "vmSize": "[parameters('swxtchSize')]",
+        "subnetCtrlId": "[resourceId(parameters('virtualNetworkRGName'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'), parameters('subnetCtrlName'))]",
+        "subnetDataId": "[resourceId(parameters('virtualNetworkRGName'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'), parameters('subnetDataName'))]",
+        "imageId": "[concat(parameters('imageDefinitionID'), '/versions/', parameters('version'))]",
+        "adminPublicKey": "[if(contains(parameters('credentials').authenticationType, 'sshPublicKey'), parameters('credentials').sshPublicKey, '' )]"
+    },
+    "resources": [
+        {
+            "name": "[variables('svcNic0Name')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2022-01-01",
+            "location": "[parameters('location')]",
+            "tags": "[ if(contains(parameters('tagsByResource'), 'Microsoft.Network/networkInterfaces'), parameters('tagsByResource')['Microsoft.Network/networkInterfaces'], json('{}')) ]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig0",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetCtrlId')]"
+                            },
+                            "privateIPAllocationMethod": "[ if(contains(parameters('useStaticIPs'), 'true'), 'Static', 'Dynamic') ]",
+                            "privateIPAddress": "[ parameters('staticCtrlIP') ]"
+                        }
+                    }
+                ],
+                "enableAcceleratedNetworking": false
+            }
+        },
+        {
+            "name": "[variables('svcNic1Name')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2022-01-01",
+            "location": "[parameters('location')]",
+            "tags": "[ if(contains(parameters('tagsByResource'), 'Microsoft.Network/networkInterfaces'), parameters('tagsByResource')['Microsoft.Network/networkInterfaces'], json('{}')) ]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig0",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetDataId')]"
+                            },
+                            "privateIPAllocationMethod": "[ if(contains(parameters('useStaticIPs'), 'true'), 'Static', 'Dynamic') ]",
+                            "privateIPAddress": "[ parameters('staticDataIP') ]"
+                        }
+                    }
+                ],
+                "enableAcceleratedNetworking": true
+            }
+        },
+        {
+            "name": "[variables('svcBaseName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2022-03-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('svcNic0Name')]",
+                "[variables('svcNic1Name')]"
+            ],
+            "tags": "[ if(contains(parameters('tagsByResource'), 'Microsoft.Compute/virtualMachines'), parameters('tagsByResource')['Microsoft.Compute/virtualMachines'], json('{}')) ]",
+            "zones": [
+                "[parameters('avzone')]"
+              ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[variables('vmSize')]"
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "name": "[variables('svcDiskName')]",
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "StandardSSD_LRS"
+                        },
+                        "deleteOption": "Delete",
+                        "caching": "ReadOnly"
+                    },
+                    "imageReference": {
+                        "Id": "[variables('imageId')]"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('svcNic0Name'))]",
+                            "properties": {
+                                "primary": true,
+                                "deleteOption": "Delete"
+                            }
+                        },
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('svcNic1Name'))]",
+                            "properties": {
+                                "primary": false,
+                                "deleteOption": "Delete"
+                            }
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[parameters('swxtchName')]",
+                    "adminUsername": "[parameters('adminName')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "[concat('/home/', parameters('adminName'), '/.ssh/authorized_keys')]",
+                                    "keyData": "[variables('adminPublicKey')]"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "proximityPlacementGroup": "[if(empty(parameters('ppgId')), json('null'), json(concat('{\"id\": \"', parameters('ppgId'), '\"}')))]",
+                "availabilitySet": "[if(empty(parameters('avsId')), json('null'), json(concat('{\"id\": \"', parameters('avsId'), '\"}')))]"
+            }
+        }
+    ],
+    "outputs": {
+        "Location": {
+            "type": "string",
+            "value": "[parameters('location')]"
+        },
+        "VNetName": {
+            "type": "string",
+            "value": "[ if( contains(parameters('vnetNewOrExisting'), 'existing'), parameters('virtualNetworkName'), 'error' ) ]"
+        },
+        "AdminName": {
+            "type": "string",
+            "value": "[parameters('adminName')]"
+        },
+        "AdminPublicKey": {
+            "type": "string",
+            "value": "[variables('adminPublicKey')]"
+        },
+        "CtrlIp": {
+            "type": "string",
+            "value": "[reference(variables('svcNic0Name')).ipConfigurations[0].properties.privateIPAddress]"
+        },
+        "DataIp": {
+            "type": "string",
+            "value": "[reference(variables('svcNic1Name')).ipConfigurations[0].properties.privateIPAddress]"
+        },
+        "SWVersion": {
+            "type": "string",
+            "value": "[parameters('version')]"
+        }
+    }
+}

@@ -1,0 +1,418 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2021-09-09/uiFormDefinition.schema.json#",
+    "view": {
+        "kind": "Form",
+        "properties": {
+            "title": "cloudSwXtch *VM Image* instantiation template",
+            "steps": [
+                {
+                    "name": "basics",
+                    "label": "Basics",
+                    "elements": [
+                        {
+                            "name": "resourceScope",
+                            "type": "Microsoft.Common.ResourceScope",
+                            "location": {
+                                "resourceTypes": [
+                                    "microsoft.resources/resourcegroups"
+                                ]
+                            }
+                        },
+                        {
+                            "name": "switchName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Switch Name",
+                            "toolTip": "The name of the switch instance.",
+                            "defaultValue": "cloudswxtch001",
+                            "constraints": {
+                                "required": true,
+                                "regex": "^[a-zA-Z][a-z0-9A-Z-]{3,24}$",
+                                "validationMessage": "The switch name must be between 3 and 24 characters long and contain letters, numbers and hyphens only."
+                            }
+                        },
+                        {
+                            "name": "swxtchSize",
+                            "type": "Microsoft.Compute.SizeSelector",
+                            "label": "Swxtch Size",
+                            "toolTip": "Size of the switch VM instance",
+                            "recommendedSizes": [
+                                "Standard_D4s_v4",
+                                "Standard_D8s_v4",
+                                "Standard_D16s_v4",
+                                "Standard_D32s_v4",
+                                "Standard_D48s_v4",
+                                "Standard_D64s_v4"
+                            ],
+                            "constraints": {
+                                "allowedSizes": [
+                                    "Standard_D4_v3",
+                                    "Standard_D8_v3",
+                                    "Standard_D16_v3",
+                                    "Standard_D32_v3",
+                                    "Standard_D48_v3",
+                                    "Standard_D64_v3",
+                                    "Standard_D4_v4",
+                                    "Standard_D8_v4",
+                                    "Standard_D16_v4",
+                                    "Standard_D32_v4",
+                                    "Standard_D48_v4",
+                                    "Standard_D64_v4",
+                                    "Standard_D4s_v3",
+                                    "Standard_D8s_v3",
+                                    "Standard_D16s_v3",
+                                    "Standard_D32s_v3",
+                                    "Standard_D48s_v3",
+                                    "Standard_D64s_v3",
+                                    "Standard_D4s_v4",
+                                    "Standard_D8s_v4",
+                                    "Standard_D16s_v4",
+                                    "Standard_D32s_v4",
+                                    "Standard_D48s_v4",
+                                    "Standard_D64s_v4",
+                                    "Standard_D4as_v4",
+                                    "Standard_D8as_v4",
+                                    "Standard_D16as_v4",
+                                    "Standard_D32as_v4",
+                                    "Standard_D48as_v4",
+                                    "Standard_D64as_v4",
+                                    "Standard_D4s_v5",
+                                    "Standard_D8s_v5",
+                                    "Standard_D16s_v5",
+                                    "Standard_D32s_v5",
+                                    "Standard_D48s_v5",
+                                    "Standard_D64s_v5",
+                                    "Standard_D4as_v5",
+                                    "Standard_D8as_v5",
+                                    "Standard_D16as_v5",
+                                    "Standard_D32as_v5",
+                                    "Standard_D48as_v5",
+                                    "Standard_D64as_v5",
+                                    "Standard_E104i_v5"
+                                ]
+                            },
+                            "osPlatform": "Linux",
+                            "imageReference": {
+                                "publisher": "Canonical",
+                                "offer": "0001-com-ubuntu-server-focal",
+                                "sku": "20_04-lts"
+                            },
+                            "visible": true,
+                            "scope": {
+                                "subscriptionId": "[steps('basics').resourceScope.subscription.subscriptionId]",
+                                "location": "[steps('basics').resourceScope.location.name]"
+                            }
+                        },
+                        {
+                            "name": "imageDefinitionID",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Full resource ID for the 'VM Image Definition' holding cloudSwXtch images",
+                            "defaultValue": "",
+                            "toolTip": "Full resource ID value. Should start with '/subscriptions/<guid>/'...",
+                            "constraints": {
+                                "required": true,
+                                "regex": "^[a-z0-9A-Z./]{20,299}$",
+                                "validationMessage": "Only alphanumeric characters are allowed, and the value must be 4-30 characters long."
+                            },
+                            "visible": "true"
+                        },
+                        {
+                            "name": "adminName",
+                            "type": "Microsoft.Compute.UserNameTextBox",
+                            "label": "Admin name",
+                            "defaultValue": "swxtchadmin",
+                            "toolTip": "User name for the admin account on the cloudSwXtch VM",
+                            "constraints": {
+                                "required": true,
+                                "regex": "^[a-z0-9A-Z]{1,30}$",
+                                "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+                            },
+                            "osPlatform": "Linux",
+                            "visible": true
+                        },
+                        {
+                            "name": "credentials",
+                            "type": "Microsoft.Compute.CredentialsCombo",
+                            "label": {
+                                "authenticationType": "Authentication type",
+                                "password": "Password",
+                                "confirmPassword": "Confirm password",
+                                "sshPublicKey": "SSH public key"
+                            },
+                            "toolTip": {
+                                "authenticationType": "SSH",
+                                "password": "not supported",
+                                "sshPublicKey": "Make sure this is the PUBLIC part of the key"
+                            },
+                            "constraints": {
+                                "required": true,
+                                "customPasswordRegex": "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{12,}$",
+                                "customValidationMessage": "The password must be alphanumeric, contain at least 12 characters, and have at least 1 letter and 1 number."
+                            },
+                            "options": {
+                                "hideConfirmation": false,
+                                "hidePassword": true
+                            },
+                            "osPlatform": "Linux",
+                            "visible": true
+                        },
+                        {
+                            "name": "textBlock3",
+                            "type": "Microsoft.Common.TextBlock",
+                            "visible": "true",
+                            "options": {
+                                "text": "Please enter the exact version. Version names are generally of the form '1.2.3'"
+                            }
+                        },
+                        {
+                            "name": "VersionTextBox",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Manual entry of software version",
+                            "defaultValue": "latest",
+                            "toolTip": "Entry exact version by name. Version names are of the form '1.0.0'",
+                            "constraints": {
+                                "required": true,
+                                "regex": "^[a-z0-9A-Z.]{4,30}$",
+                                "validationMessage": "Only alphanumeric characters are allowed, and the value must be 4-30 characters long."
+                            },
+                            "visible": "true"
+                        },
+                        {
+                            "name": "TagsSection",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Optional Resource Tags",
+                            "elements": [
+                                {
+                                    "name": "Tags",
+                                    "type": "Microsoft.Common.TagsByResource",
+                                    "label": "Optional tags",
+                                    "resources": [
+                                        "Microsoft.Network/networkInterfaces",
+                                        "Microsoft.Compute/virtualMachines"
+                                    ]
+                                }
+                            ],
+                            "visible": true
+                        }
+                    ]
+                },
+                {
+                    "name": "network",
+                    "label": "Network",
+                    "elements": [
+                        {
+                            "name": "VnetInfoBox",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[equals(steps('network').virtualnetwork.newOrExisting, 'new')]",
+                            "options": {
+                                "icon": "Error",
+                                "text": "Please select an EXISTING virtual network. Creating a new virtual network is not supported."
+                            }
+                        },
+                        {
+                            "name": "virtualnetwork",
+                            "type": "Microsoft.Network.VirtualNetworkCombo",
+                            "label": {
+                                "virtualNetwork": "Virtual network",
+                                "subnets": "Subnets"
+                            },
+                            "toolTip": {
+                                "virtualNetwork": "Only EXISTING virtual networks in the currently selected subscription and location are allowed.",
+                                "subnets": "cloudSwXtch traffic is split between control and data planes. These subnets can be shared with other applications."
+                            },
+                            "defaultValue": {
+                                "name": "pick-an-existing-vnet"
+                            },
+                            "constraints": {
+                                "minAddressPrefixSize": "/28"
+                            },
+                            "options": {
+                                "hideExisting": false
+                            },
+                            "subnets": {
+                                "ctrlSubnet": {
+                                    "label": "Control Subnet Name",
+                                    "defaultValue": {
+                                        "name": "ControlSubnet"
+                                    },
+                                    "constraints": {
+                                        "minAddressPrefixSize": "/29",
+                                        "minAddressCount": 1,
+                                        "requireContiguousAddresses": false
+                                    }
+                                },
+                                "dataSubnet": {
+                                    "label": "Data Subnet Name",
+                                    "defaultValue": {
+                                        "name": "DataSubnet"
+                                    },
+                                    "constraints": {
+                                        "minAddressPrefixSize": "/29",
+                                        "minAddressCount": 1,
+                                        "requireContiguousAddresses": false
+                                    }
+                                }
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "AdvancedSection",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Advanced Networking (optional)",
+                            "elements": [
+                                {
+                                    "name": "staticEnable",
+                                    "type": "Microsoft.Common.CheckBox",
+                                    "label": "IP addresses are dynamic by default. Check this box to specify static IP address for network interfaces",
+                                    "toolTip": "[Optional] Enables specifying static IP addresses"
+                                },
+                                {
+                                    "name": "staticInfoBox",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "[steps('network').AdvancedSection.staticEnable]",
+                                    "options": {
+                                        "icon": "Warning",
+                                        "text": "Static IPs are not validated here. An invalid static IP address will cause the deployment to fail."
+                                    }
+                                },
+                                {
+                                    "name": "ctrlIpTextBox",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "[concat('Enter static IP for network interface on ', steps('network').virtualnetwork.subnets.ctrlSubnet.name)]",
+                                    "defaultValue": "",
+                                    "toolTip": "WARNING: an invalid IP address will cause the deployment to fail",
+                                    "constraints": {
+                                        "required": true,
+                                        "regex": "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])",
+                                        "validationMessage": "Enter a valid static IP address."
+                                    },
+                                    "visible": "[steps('network').AdvancedSection.staticEnable]"
+                                },
+                                {
+                                    "name": "dataIpTextBox",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "[concat('Enter static IP for network interface on ', steps('network').virtualnetwork.subnets.dataSubnet.name)]",
+                                    "defaultValue": "",
+                                    "toolTip": "WARNING: an invalid IP address will cause the deployment to fail",
+                                    "constraints": {
+                                        "required": true,
+                                        "regex": "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])",
+                                        "validationMessage": "Enter a valid static IP address."
+                                    },
+                                    "visible": "[steps('network').AdvancedSection.staticEnable]"
+                                },
+                                {
+                                    "name": "ppgEnable",
+                                    "type": "Microsoft.Common.CheckBox",
+                                    "label": "Specify a Proximity Placement Group",
+                                    "toolTip": "[Optional] Advanced option to specify a Proximity Placement Group"
+                                },
+                                {
+                                    "name": "ppgWarning",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "[steps('network').AdvancedSection.ppgEnable]",
+                                    "options": {
+                                        "icon": "Warning",
+                                        "text": "Enter the complete 'Proximity Placement Group' resource ID. An invalid resource ID will cause the deployment to fail."
+                                    }
+                                },
+                                {
+                                    "name": "ppgTextBox",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Proximity Placement Group Resource ID",
+                                    "defaultValue": "",
+                                    "toolTip": "WARNING: an invalid 'Proximity Placement Group' Resource ID will cause the deployment to fail",
+                                    "constraints": {
+                                        "required": true,
+                                        "regex": "^[a-z0-9A-Z._/-]{60,250}$",
+                                        "validationMessage": "Enter full resource id. Must not be empty."
+                                    },
+                                    "visible": "[steps('network').AdvancedSection.ppgEnable]"
+                                },
+                                {
+                                    "name": "avsEnable",
+                                    "type": "Microsoft.Common.CheckBox",
+                                    "label": "Specify an Availability Set",
+                                    "toolTip": "[Optional] Advanced option to specify an Availability Set"
+                                },
+                                {
+                                    "name": "avsWarning",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "[steps('network').AdvancedSection.avsEnable]",
+                                    "options": {
+                                        "icon": "Warning",
+                                        "text": "Enter the complete 'Availability Set' resource ID. An invalid resource ID will cause the deployment to fail."
+                                    }
+                                },
+                                {
+                                    "name": "avsTextBox",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Availability Set Resource ID",
+                                    "defaultValue": "",
+                                    "toolTip": "WARNING: an invalid 'Availability Set' Resource ID will cause the deployment to fail",
+                                    "constraints": {
+                                        "required": true,
+                                        "regex": "^[a-z0-9A-Z._/-]{60,250}$",
+                                        "validationMessage": "Enter full resource id. Must not be empty."
+                                    },
+                                    "visible": "[steps('network').AdvancedSection.avsEnable]"
+                                },
+                                {
+                                    "name": "avzone",
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "Availability zone",
+                                    "placeholder": "",
+                                    "defaultValue": "1",
+                                    "toolTip": "Choose the VM deployment zone",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "1",
+                                                "value": "1"
+                                            },
+                                            {
+                                                "label": "2",
+                                                "value": "2"
+                                            },
+                                            {
+                                                "label": "3",
+                                                "value": "3"
+                                            }
+                                        ],
+                                        "required": true
+                                    },
+                                    "visible": true
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "outputs": {
+            "parameters": {
+                "location": "[steps('basics').resourceScope.location.name]",
+                "virtualNetworkName": "[steps('network').virtualnetwork.name]",
+                "virtualNetworkRGName": "[steps('network').virtualnetwork.resourceGroup]",
+                "vnetNewOrExisting": "[steps('network').virtualnetwork.newOrExisting]",
+                "subnetCtrlName": "[steps('network').virtualnetwork.subnets.ctrlSubnet.name]",
+                "subnetDataName": "[steps('network').virtualnetwork.subnets.dataSubnet.name]",
+                "useStaticIPs": "[ if(steps('network').AdvancedSection.staticEnable, 'true', 'false') ]",
+                "staticCtrlIP": "[steps('network').AdvancedSection.ctrlIpTextBox]",
+                "staticDataIP": "[steps('network').AdvancedSection.dataIpTextBox]",
+                "swxtchName": "[steps('basics').switchName]",
+                "version": "[steps('basics').VersionTextBox]",
+                "swxtchSize": "[steps('basics').swxtchSize]",
+                "ppgId": "[if(steps('network').AdvancedSection.ppgEnable, steps('network').AdvancedSection.ppgTextBox, '')]",
+                "avsId": "[if(steps('network').AdvancedSection.avsEnable, steps('network').AdvancedSection.avsTextBox, '')]",
+                "avzone": "[steps('network').AdvancedSection.avzone]",
+                "tagsByResource": "[steps('basics').TagsSection.Tags]",
+                "adminName": "[steps('basics').adminName]",
+                "credentials": "[steps('basics').credentials]",
+                "imageDefinitionID": "[steps('basics').imageDefinitionID]"
+            },
+            "kind": "ResourceGroup",
+            "location": "[steps('basics').resourceScope.location.name]",
+            "resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]"
+        }
+    }
+}
