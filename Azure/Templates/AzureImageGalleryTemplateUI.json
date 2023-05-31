@@ -158,7 +158,7 @@
                         {
                             "name": "textBlock3",
                             "type": "Microsoft.Common.TextBlock",
-                            "visible": "true",
+                            "visible": "false",
                             "options": {
                                 "text": "Please enter the exact version. Version names are generally of the form '1.2.3'"
                             }
@@ -174,7 +174,7 @@
                                 "regex": "^[a-z0-9A-Z.]{4,30}$",
                                 "validationMessage": "Only alphanumeric characters are allowed, and the value must be 4-30 characters long."
                             },
-                            "visible": "true"
+                            "visible": "false"
                         },
                         {
                             "name": "TagsSection",
