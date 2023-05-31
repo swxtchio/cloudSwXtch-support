@@ -148,7 +148,7 @@
         "vmSize": "[parameters('swxtchSize')]",
         "subnetCtrlId": "[resourceId(parameters('virtualNetworkRGName'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'), parameters('subnetCtrlName'))]",
         "subnetDataId": "[resourceId(parameters('virtualNetworkRGName'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'), parameters('subnetDataName'))]",
-        "imageId": "[concat(parameters('imageDefinitionID'), '/versions/', parameters('version'))]",
+        "imageId": "[concat(parameters('imageDefinitionID'), '')]",
         "adminPublicKey": "[if(contains(parameters('credentials').authenticationType, 'sshPublicKey'), parameters('credentials').sshPublicKey, '' )]"
     },
     "resources": [
