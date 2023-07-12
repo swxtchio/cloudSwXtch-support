@@ -1,6 +1,7 @@
 variable "swxtch_count" {
-  type    = number
-  default = 1
+  description = "The number of cloudSwXtches to deploy"
+  type        = number
+  default     = 1
 }
 
 variable "swxtch_plan" {
