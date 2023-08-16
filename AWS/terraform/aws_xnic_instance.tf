@@ -54,13 +54,20 @@ function wait_for_url() {
   return 0
 }
 
+# Give the swXtch some time for it to start its update.
+INITIAL_WAIT=120
+echo "Waiting for $INITIAL_WAIT for swXtch to begin update"
+sleep $INITIAL_WAIT
+
 # Wait for the cloudSwxtch to respond and be ready
+echo "Wait for the swXtch to respond"
 wait_for_url "http://${aws_network_interface.swxtch_ctrl[0].private_ip}/swxtch/debug/v1/version" 20
 if [[ $? -ne 0 ]] ; then
   exit 1
 fi
 
 # Install the xNIC
+echo "Installing xNIC"
 curl --fail http://${aws_network_interface.swxtch_ctrl[0].private_ip}/services/install/swxtch-xnic-install.sh | bash -s -- -k -v "${var.xnic_version}"
 if [[ $? -ne 0 ]] ; then
   exit 1

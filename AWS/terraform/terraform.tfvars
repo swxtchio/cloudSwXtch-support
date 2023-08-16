@@ -13,6 +13,6 @@ swxtch_name    = "swxtch-tf-example"
 
 instance_type = "m5.xlarge"
 
-xnic_instance_count = 1
+xnic_instance_count = 0
 xnic_instance_type  = "m5.large"
 xnic_version        = "2"
