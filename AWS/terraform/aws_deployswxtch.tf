@@ -56,7 +56,7 @@ resource "aws_network_interface" "swxtch_ctrl" {
 
 # If you wish to update the cloudswXtch version during cloud-init, include this block
 # and pass it to the user_data section of the aws_instance
-data "cloudinit_config" "swxtch-config" {
+data "cloudinit_config" "swxtch_config" {
   gzip          = false
   base64_encode = false
 
@@ -79,7 +79,7 @@ resource "aws_instance" "swxtch" {
     Name = "${var.swxtch_name}-0${count.index}"
   }
 
-  user_data = data.cloudinit_config.swxtch-config.rendered
+  user_data = data.cloudinit_config.swxtch_config.rendered
 
   network_interface {
     device_index         = 0
