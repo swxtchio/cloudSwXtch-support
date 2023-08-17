@@ -56,7 +56,7 @@ resource "aws_network_interface" "swxtch_ctrl" {
 
 # If you wish to update the cloudswXtch version during cloud-init, include this block
 # and pass it to the user_data section of the aws_instance
-data "cloudinit_config" "swxtch-config" {
+data "cloudinit_config" "swxtch_config" {
   gzip          = false
   base64_encode = false
 
@@ -65,7 +65,40 @@ data "cloudinit_config" "swxtch-config" {
 
     content = <<EOT
 #!/bin/bash
+sudo ufw allow ssh
+
+function wait_for_url() {
+  local __url=$1
+
+  local curl_attempt_counter=0
+  local curl_max_attempts=60
+
+  until $(curl --output /dev/null --silent --fail $__url); do
+      if [ $curl_attempt_counter -eq $curl_max_attempts ];then
+        echo "Max attempts reached"
+        return 255
+      fi
+
+      printf '.'
+      curl_attempt_counter=$(($curl_attempt_counter+1))
+      sleep 10
+  done
+  return 0
+}
+
+# Enable firewall to prevent clients from connecting prior to the swXtch being updated and ready.
+sudo ufw enable
+
+# Update the swXtch to the specified version.
 /swxtch/swx update -i localhost -v "${var.swxtch_version}"
+
+sudo service swxtch-ctrl stop
+
+# Wait for the newly updated swxtch-ctrl to respond
+wait_for_url "http://localhost:80/swxtch/debug/v1/version"
+
+# Re-disable the firewall
+sudo ufw disable
 EOT
   }
 }
@@ -79,7 +112,8 @@ resource "aws_instance" "swxtch" {
     Name = "${var.swxtch_name}-0${count.index}"
   }
 
-  user_data = data.cloudinit_config.swxtch-config.rendered
+  user_data                   = data.cloudinit_config.swxtch_config.rendered
+  user_data_replace_on_change = true
 
   network_interface {
     device_index         = 0
