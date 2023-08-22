@@ -101,8 +101,8 @@ resource "azurerm_linux_virtual_machine" "CloudSwxtch" {
   }
 
   plan {
-    name      = "swxtch-small-002"
-    publisher = "swxtchiollc1614108926893"
-    product   = "cloudswxtch-vm-001"
+    name      = var.swxtch_plan
+    publisher = local.cloudswxtch_image_publisher
+    product   = local.cloudswxtch_image_offer
   }
 }
