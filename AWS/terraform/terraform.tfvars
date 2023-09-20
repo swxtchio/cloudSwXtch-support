@@ -8,7 +8,7 @@ vpc_id            = "VPC ID HERE"
 
 swxtch_count   = 1
 swxtch_version = "latest"
-swxtch_plan    = "small"
+swxtch_plan    = "multicast"
 swxtch_name    = "swxtch-tf-example"
 
 instance_type = "m5.xlarge"
