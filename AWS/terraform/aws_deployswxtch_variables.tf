@@ -12,11 +12,11 @@ variable "swxtch_count" {
 
 variable "swxtch_plan" {
   type        = string
-  description = "One of small, medium, or large"
+  description = "Which cloudswXtch plan to use. Options are: multicast,byol"
 
   validation {
-    condition     = var.swxtch_plan == "small" || var.swxtch_plan == "medium" || var.swxtch_plan == "large"
-    error_message = "swxtch_plan must be one of small, medium, or large"
+    condition     = var.swxtch_plan == "multicast" || var.swxtch_plan == "byol"
+    error_message = "swxtch_plan must be one of: multicast,byol"
   }
 }
 

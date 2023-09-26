@@ -55,7 +55,8 @@ resource "aws_network_interface" "swxtch_ctrl" {
 }
 
 # If you wish to update the cloudswXtch version during cloud-init, include this block
-# and pass it to the user_data section of the aws_instance
+# and pass it to the user_data section of the aws_instance. If you are using a BYOL
+# swxtch plan, you need to modify this script or manually copy your license file.
 data "cloudinit_config" "swxtch_config" {
   gzip          = false
   base64_encode = false
