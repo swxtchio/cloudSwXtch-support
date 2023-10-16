@@ -51,6 +51,7 @@ resource "google_compute_instance" "swxtch" {
 
   machine_type = var.swxtch_machine_type
 
+  min_cpu_platform = "Intel Ice Lake"
 
   metadata = {
     user-data = data.cloudinit_config.swxtch_config.rendered
