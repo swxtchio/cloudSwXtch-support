@@ -18,12 +18,12 @@ variable "swxtch_instance_size" {
 variable "swxtch_plan" {
   description = "The plan to use. One of: swxtch-small-003 or byol-001"
   type        = string
-  default     = "swxtch-small-003"
+  default     = "swx-poc-001"
 
   validation {
     condition = contains(
       [
-        "swxtch-small-003",
+        "swx-poc-001",
         "byol-001",
     ], var.swxtch_plan)
 
